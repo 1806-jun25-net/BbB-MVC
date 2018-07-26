@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +17,15 @@ namespace TodoMVC.Models
         /// <summary>
         /// Username
         /// </summary>
+        [Display(Name = "User Name")]
+        [Required]
         public string Name { get; set; }
+
         /// <summary>
         /// Password
         /// </summary>
+        [Display(Name = "Password")]
+        [Required]
         public string Pass { get; set; }
 
         /// <summary>
@@ -35,6 +41,7 @@ namespace TodoMVC.Models
         /// <summary>
         /// Name of company/employer
         /// </summary>
+        [Required]
         public string Company { get; set; }
 
         /// <summary>

@@ -34,6 +34,23 @@ namespace TodoMVC.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult Login(User user)
+        //{
+        //}
+
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult CreateUser(User user)
+        //{
+        //}
+
         public IActionResult Privacy()
         {
             return View();

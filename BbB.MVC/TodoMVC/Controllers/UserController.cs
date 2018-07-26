@@ -8,7 +8,27 @@ namespace TodoMVC.Controllers
 {
     public class UserController : Controller
     {
-        public IActionResult Index()
+        public IActionResult UserOptions()
+        {
+            return View();
+        }
+
+        public IActionResult LookForDrives()
+        {
+            return View();
+        }
+
+        public IActionResult JoinedDrives()
+        {
+            return View();
+        }
+
+        public IActionResult History()
+        {
+            return View();
+        }
+
+        public IActionResult Upgrade()
         {
             return View();
         }
