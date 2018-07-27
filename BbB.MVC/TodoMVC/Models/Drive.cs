@@ -5,9 +5,15 @@ using System.Threading.Tasks;
 
 namespace TodoMVC.Models
 {
-    public class JoinDrive
+    public class Drive
     {
-        private List<User> UsersReal;
+        public bool IsPickup { get; set; }
+
+        public List<User> UsersReal;
+
+        public static readonly int MAX_PICKUP_SIZE = 12;
+
+        public Dictionary<User, List<OrderItem>> OrdersReal;
 
         /// <summary>
         /// internal Id. -1 if untracked by database

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<TodoMVC.Models.Drive>
+
+@{
+    ViewData["Title"] = "Drives";
+}
+
+<h2>Drives</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Driver Name
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => item.Driver.Name)
+            </td>
+            @if (item.IsPickup)
+            {
+                <td>
+                    Pickup @* Need to add the amount of pickups availabe *@
+                </td>
+            }
+            else
+            {
+                <td>
+                    Join @* Need to add the amount of seats available *@
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+        </tr>
+        @* Add a way to join the drives 
+           Add a way for the user to see the menu of the location *@
+}
+    </tbody>
+</table>

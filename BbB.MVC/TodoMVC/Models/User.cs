@@ -17,20 +17,23 @@ namespace TodoMVC.Models
         /// <summary>
         /// Username
         /// </summary>
-        [Display(Name = "User Name")]
         [Required]
+        [Display(Name = "User Name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Password
-        /// </summary>
-        [Display(Name = "Password")]
+        /// </summary>        
         [Required]
+        [Display(Name = "Password")]
+        [StringLength(100, MinimumLength = 6)]
+        [DataType(DataType.Password)]
         public string Pass { get; set; }
 
         /// <summary>
         /// Email Address
         /// </summary>
+        [Required]
         public string Email { get; set; }
 
         /// <summary>

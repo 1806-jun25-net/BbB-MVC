@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace TodoMVC.Models
 {
-    public class Driver
+    public class Driver : User
     {
         /// <summary>
         /// internal Id
@@ -16,11 +17,14 @@ namespace TodoMVC.Models
         /// <summary>
         /// Default number of people who driver will take on a join drive
         /// </summary>
+        [Required]
         public int Seats { get; set; }
 
         /// <summary>
         /// Default message for where to meet
         /// </summary>
+        [Required]
+        [Display(Name = "Meet Location")]
         public string MeetLoc { get; set; }
 
         /// <summary>

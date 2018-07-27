@@ -1,0 +1,34 @@
+﻿@model TodoMVC.Models.Driver
+
+@{
+    ViewData["Title"] = "Upgrade";
+}
+
+<h2>Upgrade</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Upgrade">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Seats" class="control-label"></label>
+                <input asp-for="Seats" class="form-control" />
+                <span asp-validation-for="Seats" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MeetLoc" class="control-label"></label>
+                <input asp-for="MeetLoc" class="form-control" />
+                <span asp-validation-for="MeetLoc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
