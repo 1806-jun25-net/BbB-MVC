@@ -46,7 +46,6 @@ namespace TodoMVC
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
             }
 
             app.UseStaticFiles();
