@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using TodoMvc.Controllers;
 using TodoMVC.Models;
 
 namespace TodoMVC.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AServiceController
     {
         private readonly static string ServiceUri = "https://localhost:44318/api/";
 
         public HomeController(HttpClient httpClient) : base(httpClient)
         { }
 
-        public IActionResult Index()
+        public IActionResult Index()    
         {
             return View();
         }
@@ -28,10 +30,10 @@ namespace TodoMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(User user)
+        public async Task<IActionResult> Login(User user)
         {
             HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "api/user/login", user);
-            
+
             HttpResponseMessage apiResponse;
 
             try
@@ -40,21 +42,24 @@ namespace TodoMVC.Controllers
             }
             catch (AggregateException ex)
             {
-                return View("Error");
+                ModelState.AddModelError("", "Error");
+                return View();
             }
 
             if (!apiResponse.IsSuccessStatusCode)
             {
                 if (apiResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    return View("AccessDenied");
+                    ModelState.AddModelError("", "Access Denied");
+                    return View();
                 }
-                return View("Error");
+                ModelState.AddModelError("", "Error2");
+                return View();
             }
 
             PassCookiesToClient(apiResponse);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("UserOptions", "User");
         }
 
         public IActionResult CreateUser()
