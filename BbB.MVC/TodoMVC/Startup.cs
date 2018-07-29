@@ -31,7 +31,7 @@ namespace TodoMVC
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSingleton<HttpClient>();
+            services.AddSingleton(sp => new HttpClient(new HttpClientHandler { UseCookies = false }));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

@@ -32,7 +32,7 @@ namespace TodoMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
         {
-            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "api/user/login", user);
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/login", user);
 
             HttpResponseMessage apiResponse;
 
