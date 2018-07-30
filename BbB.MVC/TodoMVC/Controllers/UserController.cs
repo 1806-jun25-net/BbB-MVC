@@ -4,27 +4,24 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using TodoMvc.Controllers;
 
 namespace TodoMVC.Controllers
 {
-    public class UserController : Controller
+    public class UserController : AServiceController
     {
-        private readonly static string ServiceUri = "http://localhost:61443/api/";
-
-        public HttpClient HttpClient { get; }
-
-        public UserController(HttpClient httpClient)
-        {
-            HttpClient = httpClient;
-        }
+        public UserController(HttpClient httpClient) : base(httpClient)
+        { }
 
         public IActionResult UserOptions()
         {
             return View();
         }
 
-        public IActionResult LookForDrives()
+        public IActionResult LookForDrives() 
         {
+            var request = CreateRequestToService(HttpMethod.Get, "/drive");            
+
             return View();
         }
 
