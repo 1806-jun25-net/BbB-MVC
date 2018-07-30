@@ -13,11 +13,6 @@ namespace TodoMVC.Controllers
         public UserController(HttpClient httpClient) : base(httpClient)
         { }
 
-        public IActionResult GetUsers()
-        {
-            return View();
-        }
-
         public IActionResult UserOptions()
         {
             return View();
