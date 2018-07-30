@@ -13,7 +13,6 @@ namespace TodoMVC.Controllers
 {
     public class HomeController : AServiceController
     {
-        private readonly static string ServiceUri = "https://localhost:44318/api/";
 
         public HomeController(HttpClient httpClient) : base(httpClient)
         { }
@@ -25,6 +24,28 @@ namespace TodoMVC.Controllers
 
         public IActionResult Login()
         {
+            return View();
+        }
+
+        [HttpGet]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetUsers()
+        {
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Get, "user");
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            PassCookiesToClient(apiResponse);
+
             return View();
         }
 
@@ -50,28 +71,53 @@ namespace TodoMVC.Controllers
             {
                 if (apiResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    ModelState.AddModelError("", "Access Denied");
+                    ModelState.AddModelError("", "Incorrect Username or Passwor");
                     return View();
                 }
-                ModelState.AddModelError("", "Error2");
-                return View();
+                //ModelState.AddModelError("", "Incorrect Username or Password");
+                //return View();
             }
 
             PassCookiesToClient(apiResponse);
 
             return RedirectToAction("UserOptions", "User");
         }
-
-        public IActionResult CreateUser()
+                
+        public IActionResult Register()
         {
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult CreateUser(User user)
-        //{
-        //}
+        // POST: Account/Register
+        [HttpPost]
+        public async Task<ActionResult> Register(User user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Error");
+            }
+
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/register", user);
+
+            HttpResponseMessage apiResponse;
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch
+            {
+                return View("Error");
+            }
+
+            if (!apiResponse.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
+            PassCookiesToClient(apiResponse);
+
+            return RedirectToAction("UserOptions", "User");
+        }
 
         public IActionResult Privacy()
         {
