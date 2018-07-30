@@ -27,28 +27,6 @@ namespace TodoMVC.Controllers
             return View();
         }
 
-        [HttpGet]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetUsers()
-        {
-            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Get, "user");
-            HttpResponseMessage apiResponse;
-
-            try
-            {
-                apiResponse = await HttpClient.SendAsync(apiRequest);
-            }
-            catch (AggregateException ex)
-            {
-                ModelState.AddModelError("", "Error");
-                return View();
-            }
-
-            PassCookiesToClient(apiResponse);
-
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
