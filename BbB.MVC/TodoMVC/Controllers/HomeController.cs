@@ -52,8 +52,8 @@ namespace TodoMVC.Controllers
                     ModelState.AddModelError("", "Incorrect Username or Passwor");
                     return View();
                 }
-                //ModelState.AddModelError("", "Incorrect Username or Password");
-                //return View();
+                ModelState.AddModelError("", "Error2");
+                return View();
             }
 
             PassCookiesToClient(apiResponse);

@@ -20,7 +20,9 @@ namespace TodoMVC.Controllers
 
         public IActionResult LookForDrives() 
         {
-            var request = CreateRequestToService(HttpMethod.Get, "/drive");            
+            var request = CreateRequestToService(HttpMethod.Get, "/drive");
+
+            Request.Cookies.
 
             return View();
         }
