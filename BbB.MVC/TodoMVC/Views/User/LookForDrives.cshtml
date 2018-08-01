@@ -19,6 +19,9 @@
                 Type
             </th>
             <th>
+                Slots
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Time)
             </th>
         </tr>
@@ -28,33 +31,72 @@
         {
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Driver.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Dest.Name)
-                    </td>
-                    @if (item.IsPickup)
-                    {
-                        <td>
-                            Pickup @* Need to add the amount of pickups availabe *@
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            Join @* Need to add the amount of seats available *@
-                        </td>
-                    }
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Time)
-                    </td>
-                </tr>
-                @* Add a way to join the drives
-                    Add a way for the user to see the menu of the location *@
+                if ((string)TempData.Peek("username") != item.Driver.Name)
+                {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Driver.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dest.Name)
+            </td>
+            @if (item.IsPickup)
+            {
+                <td>
+                    Pickup
+                </td>
             }
-        }
+            else
+            {
+                <td>
+                    Join
+                </td>
+            }
+            @if (item.IsPickup)
+            {
+                string line;
+                if (item.OrdersReal != null)
+                {
+                    line = item.OrdersReal.Count + " / 12";
+                }
+                else
+                {
+                    line = "0 / 12";
+                }
+                <td>
+                    @line
+                </td>
+            }
+            else
+            {
+                string line;
+                if (item.UsersReal != null)
+                {
+                    line = item.UsersReal.Count + " / " + item.Driver.Seats;
+                }
+                else
+                {
+                    line = "0 / " + item.Driver.Seats;
+                }
+                <td>
+                    @line
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            @if (item.UsersReal.Count < item.Driver.Seats || item.OrdersReal.Count < 12)
+            {
+                <td>
+                    <!-- <input type="submit" value="Join Drive" class="btn btn-default" /> -->
+                </td>
+            }
+        </tr>
+                    @* Add a way to join the drives
+                        Add a way for the user to see the menu of the location *@
+                }
+             }
+         }
     </tbody>
 </table>
 

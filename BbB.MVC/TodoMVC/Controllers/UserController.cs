@@ -29,6 +29,14 @@ namespace TodoMVC.Controllers
             var user = TempData.Get<User>("user");
             TempData.Put("user", user);
 
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", user.Name);
+            }else if((string)TempData.Peek("username") != user.Name)
+            {
+                TempData["username"] = user.Name;
+            }
+
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Company + "/company");
 
             var response = await HttpClient.SendAsync(request);
