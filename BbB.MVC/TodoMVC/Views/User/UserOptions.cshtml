@@ -1,9 +1,10 @@
-﻿
+﻿@model TodoMVC.Models.User
+
 @{
     ViewData["Title"] = "User Options";
 }
 
-<h2>User Options</h2>
+<h2>Welcome Back @Html.DisplayFor(modelItem => Model.Name)</h2>
 
 <div>
     <a asp-action="LookForDrives">Look for drives</a><br />

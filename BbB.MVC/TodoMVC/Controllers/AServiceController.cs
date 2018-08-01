@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 
 namespace TodoMvc.Controllers
@@ -43,6 +44,22 @@ namespace TodoMvc.Controllers
             }
 
             return apiRequest;
+        }
+    }
+
+    // Used to store complex objects in TempData
+    public static class TempDataExtensions
+    {
+        public static void Put<T>(this ITempDataDictionary tempData, string key, T value) where T : class
+        {
+            tempData[key] = JsonConvert.SerializeObject(value);
+        }
+
+        public static T Get<T>(this ITempDataDictionary tempData, string key) where T : class
+        {
+            object o;
+            tempData.TryGetValue(key, out o);
+            return o == null ? null : JsonConvert.DeserializeObject<T>((string)o);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TodoMvc.Controllers;
+using TodoMVC.Models;
 
 namespace TodoMVC.Controllers
 {
@@ -15,14 +16,15 @@ namespace TodoMVC.Controllers
 
         public IActionResult UserOptions()
         {
-            return View();
+            var user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+
+            return View(user);
         }
 
         public IActionResult LookForDrives() 
         {
-            var request = CreateRequestToService(HttpMethod.Get, "/drive");
-
-            Request.Cookies.
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "/drive");
 
             return View();
         }
