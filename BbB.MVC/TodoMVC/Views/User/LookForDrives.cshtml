@@ -24,29 +24,38 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => item.Driver.Name)
-            </td>
-            @if (item.IsPickup)
+        @if (Model.Count() > 0)
+        {
+            @foreach (var item in Model)
             {
-                <td>
-                    Pickup @* Need to add the amount of pickups availabe *@
-                </td>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Driver.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Dest.Name)
+                    </td>
+                    @if (item.IsPickup)
+                    {
+                        <td>
+                            Pickup @* Need to add the amount of pickups availabe *@
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            Join @* Need to add the amount of seats available *@
+                        </td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Time)
+                    </td>
+                </tr>
+                @* Add a way to join the drives
+                    Add a way for the user to see the menu of the location *@
             }
-            else
-            {
-                <td>
-                    Join @* Need to add the amount of seats available *@
-                </td>
-            }
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-        </tr>
-        @* Add a way to join the drives 
-           Add a way for the user to see the menu of the location *@
-}
+        }
     </tbody>
 </table>
+
+<a asp-action="UserOptions">Back to user options</a><br />
