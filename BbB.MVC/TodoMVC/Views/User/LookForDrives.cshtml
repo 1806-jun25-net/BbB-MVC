@@ -4,6 +4,35 @@
     ViewData["Title"] = "Drives";
 }
 
+<script>
+    function joinDrive(driveId, counter, isPickup, seats) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                var pId = "joined" + driveId;
+                var btnId = "btn" + driveId;
+                var countId = "count" + driveId;
+                var counterUpdate;
+                document.getElementById(pId).innerHTML = "Joined";
+                document.getElementById(btnId).classList.add("hide");
+                if (isPickup === 1) {
+                    counter += 1;
+                    counterUpdate =  counter + " / 12";
+                } else {
+                    counter += 1;
+                    counterUpdate = counter + " / " + seats;
+                }
+                document.getElementById(countId).innerHTML = counterUpdate;
+            }
+        };
+        var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId");
+        xhttp.open("POST", uri, true);
+        //xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //xhttp.send("fname=Henry&lname=Ford");
+        xhttp.send();
+    }
+</script>
+
 <h2>Drives</h2>
 
 <table class="table">
@@ -19,34 +48,133 @@
                 Type
             </th>
             <th>
+                Slots
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Time)
             </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => item.Driver.Name)
-            </td>
-            @if (item.IsPickup)
+        @if (Model.Count() > 0)
+        {
+            @foreach (var item in Model)
             {
-                <td>
-                    Pickup @* Need to add the amount of pickups availabe *@
-                </td>
-            }
-            else
-            {
-                <td>
-                    Join @* Need to add the amount of seats available *@
-                </td>
-            }
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-        </tr>
-        @* Add a way to join the drives 
-           Add a way for the user to see the menu of the location *@
-}
+                if ((string)TempData.Peek("username") != item.Driver.Name)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Driver.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Dest.Name)
+                        </td>
+                        @if (item.IsPickup)
+                        {
+                            <td>
+                                Pickup
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                Join
+                            </td>
+                        }
+                        @{ 
+                            int counter = 0;
+                            int seats = 0;
+                            int isPickup = 0;
+                         }
+                        @if (item.IsPickup)
+                        {
+                            isPickup = 1;
+                            string line;
+                            string count = "count" + item.Id;
+                            if (item.OrdersReal != null)
+                            {
+                                counter = item.OrdersReal.Count;
+                                line = counter + " / 12";
+                            }
+                            else
+                            {
+                                counter = 0;
+                                line = counter + " / 12";
+                            }
+                            <td>
+                                <p id=@count >@line</p>
+                            </td>
+                        }
+                        else
+                        {
+                            string line;
+                            string count = "count" + item.Id;
+                            seats = item.Driver.Seats;
+                            if (item.UsersReal != null)
+                            {
+                                counter = item.UsersReal.Count;
+                                line = counter + " / " + seats;
+                            }
+                            else
+                            {
+                                counter = 0;
+                                line = counter + " / " + seats;
+                            }
+                            <td>
+                                <p id=@count >@line</p>
+                            </td>
+                        }
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Time)
+                        </td>
+                        @if (item.UsersReal.Count < item.Driver.Seats || item.OrdersReal.Count < 12)
+                        {
+                            bool isJoined = false;
+                            if (item.UsersReal != null) {
+                                foreach (var j in item.UsersReal)
+                                {
+                                    if (j.Name == (string)TempData.Peek("username"))
+                                    {
+                                        isJoined = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var users = item.OrdersReal.Keys;
+                                foreach(var j in users)
+                                {
+                                    if(j.Name == (string)TempData.Peek("username"))
+                                    {
+                                        isJoined = true;
+                                        break;
+                                    }
+                                }
+                            } @* This is to check if the user already joined the drive *@
+                            if (isJoined)
+                            {
+                                    <td>Joined</td>
+                            }
+                            else
+                            {
+                                <td>
+                                    @{ 
+                                        string pId = "joined" + item.Id;
+                                        string btnId = "btn" + item.Id;
+                                     }                                   
+                                    <p id=@pId ></p>
+                                    @* button to join the drive *@
+                                    <button type="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
+                                </td>
+                            }
+                         }
+                    </tr>
+                }
+             }
+         }
     </tbody>
 </table>
+
+<a asp-action="UserOptions">Back to user options</a><br />
+
