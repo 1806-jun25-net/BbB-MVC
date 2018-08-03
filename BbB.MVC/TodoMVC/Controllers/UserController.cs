@@ -22,7 +22,8 @@ namespace TodoMVC.Controllers
         {
             if (!(await GetUserInfo(name)))
             {
-                ModelState.AddModelError("", "There was an error");
+                ModelState.AddModelError("", "There was an error login in please try agian");
+                RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
             TempData.Put("user", user);
@@ -55,9 +56,20 @@ namespace TodoMVC.Controllers
             return View(drives);
         }
 
-        public IActionResult JoinedDrives()
+        public async Task<IActionResult> JoinedDrives()
         {
-            return View();
+            var user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/user");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<Drive> drives = JsonConvert.DeserializeObject<List<Drive>>(jsonString);
+
+            return View(drives);
         }
 
         public IActionResult History()
