@@ -58,8 +58,7 @@ namespace TodoMVC.Controllers
             }
 
             PassCookiesToClient(apiResponse);
-
-            // This is a test
+            
             if(!(await GetUserInfo(user.Name)))
             {
                 ModelState.AddModelError("", "There was an error");
@@ -100,8 +99,7 @@ namespace TodoMVC.Controllers
             }
 
             PassCookiesToClient(apiResponse);
-
-            // This is a test
+            
             if (!(await GetUserInfo(user.Name)))
             {
                 ModelState.AddModelError("", "There was an error");
