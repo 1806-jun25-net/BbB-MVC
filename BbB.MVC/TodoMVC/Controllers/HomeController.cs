@@ -58,14 +58,8 @@ namespace TodoMVC.Controllers
             }
 
             PassCookiesToClient(apiResponse);
-
-            // This is a test
-            if(!(await GetUserInfo(user.Name)))
-            {
-                ModelState.AddModelError("", "There was an error");
-            }
-
-            return RedirectToAction("UserOptions", "User");
+            
+            return RedirectToAction("UserOptions", "User", new { name = user.Name });
         }
 
         public IActionResult LoginAdmin()
@@ -167,14 +161,8 @@ namespace TodoMVC.Controllers
             }
 
             PassCookiesToClient(apiResponse);
-
-            // This is a test
-            if (!(await GetUserInfo(user.Name)))
-            {
-                ModelState.AddModelError("", "There was an error");
-            }
-
-            return RedirectToAction("UserOptions", "User");
+            
+            return RedirectToAction("UserOptions", "User", new { name = user.Name });
         }
 
         public IActionResult Privacy()
@@ -202,32 +190,6 @@ namespace TodoMVC.Controllers
                 }
             }
             return false;
-        }
-
-        private async Task<bool> GetUserInfo(string userName)
-        {
-            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "user/" + userName);
-            try
-            {
-                var response = await HttpClient.SendAsync(request);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return false;
-                }
-
-                string jsonString = await response.Content.ReadAsStringAsync();
-
-                User user = JsonConvert.DeserializeObject<User>(jsonString);
-
-                TempData.Put("user", user);
-
-                return true;
-            }
-            catch (HttpRequestException ex)
-            {
-                return false;
-            }
-        }
+        }        
     }
 }

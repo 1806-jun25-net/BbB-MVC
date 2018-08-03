@@ -18,8 +18,12 @@ namespace TodoMVC.Controllers
         public UserController(HttpClient httpClient) : base(httpClient)
         { }
 
-        public IActionResult UserOptions()
+        public async Task<IActionResult> UserOptions(string name)
         {
+            if (!(await GetUserInfo(name)))
+            {
+                ModelState.AddModelError("", "There was an error");
+            }
             var user = TempData.Get<User>("user");
             TempData.Put("user", user);
             return View(user);
@@ -64,6 +68,32 @@ namespace TodoMVC.Controllers
         public IActionResult Upgrade()
         {
             return View();
+        }
+
+        private async Task<bool> GetUserInfo(string userName)
+        {
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "user/" + userName);
+            try
+            {
+                var response = await HttpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return false;
+                }
+
+                string jsonString = await response.Content.ReadAsStringAsync();
+
+                User user = JsonConvert.DeserializeObject<User>(jsonString);
+
+                TempData.Put("user", user);
+
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                return false;
+            }
         }
     }
 }
