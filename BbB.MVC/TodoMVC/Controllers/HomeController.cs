@@ -60,7 +60,74 @@ namespace TodoMVC.Controllers
 
             return RedirectToAction("UserOptions", "User");
         }
-                
+
+        public IActionResult LoginAdmin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginAdmin(User user)
+        {
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/loginadmin", user);
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            if (!apiResponse.IsSuccessStatusCode)
+            {
+                if (apiResponse.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    ModelState.AddModelError("", "Incorrect Username or Passwor");
+                    return View();
+                }
+                //ModelState.AddModelError("", "Incorrect Username or Password");
+                //return View();
+            }
+
+            PassCookiesToClient(apiResponse);
+
+            return RedirectToAction("UserOptions", "User");
+        }
+        
+        public async Task<ActionResult> Logout()
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Error");
+            }
+
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/logout");
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                return View("Error");
+            }
+
+            if (!apiResponse.IsSuccessStatusCode)
+            {
+                return View("Error");
+            }
+
+            return View("Login");
+        }
+
         public IActionResult Register()
         {
             return View();
