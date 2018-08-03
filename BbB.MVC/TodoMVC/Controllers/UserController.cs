@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TodoMvc.Controllers;
@@ -32,9 +33,11 @@ namespace TodoMVC.Controllers
             if (TempData.Peek("username") == null)
             {
                 TempData.Add("username", user.Name);
+                TempData.Add("userId", user.Id);
             }else if((string)TempData.Peek("username") != user.Name)
             {
                 TempData["username"] = user.Name;
+                TempData["userId"] = user.Id;
             }
 
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Company + "/company");
