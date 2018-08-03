@@ -50,7 +50,7 @@ namespace TodoMVC.Controllers
             {
                 if (apiResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    ModelState.AddModelError("", "Incorrect Username or Passwor");
+                    ModelState.AddModelError("", "Incorrect Username or Password");
                     return View();
                 }
                 ModelState.AddModelError("", "Error2");
@@ -95,7 +95,7 @@ namespace TodoMVC.Controllers
             {
                 if (apiResponse.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    ModelState.AddModelError("", "Incorrect Username or Passwor");
+                    ModelState.AddModelError("", "Incorrect admin credentials");
                     return View();
                 }
                 //ModelState.AddModelError("", "Incorrect Username or Password");
