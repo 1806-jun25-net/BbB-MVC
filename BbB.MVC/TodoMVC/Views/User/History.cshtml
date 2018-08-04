@@ -27,7 +27,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayNameFor(model => item.Driver.Name)
+                @item.Driver.Name
+            </td>
+            <td>
+                @item.Dest.Name
             </td>
             @if (item.IsPickup)
             {
@@ -42,7 +45,7 @@
                 </td>
             }
             <td>
-                @Html.DisplayFor(modelItem => item.Time)
+                @item.Time
             </td>
         </tr>
         @* Add a way for the user to look at his order *@

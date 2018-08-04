@@ -22,7 +22,8 @@ namespace TodoMVC.Controllers
         {
             if (!(await GetUserInfo(name)))
             {
-                ModelState.AddModelError("", "There was an error");
+                ModelState.AddModelError("", "There was an error login in please try agian");
+                RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
             TempData.Put("user", user);
@@ -52,12 +53,47 @@ namespace TodoMVC.Controllers
 
             List<Drive> drives = JsonConvert.DeserializeObject<List<Drive>>(jsonString);
 
+            // still need a way to check if the user already joined the pickup drive
+
+            // Get all the Ids of the drives the user has joined
+                        
+            request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/JoinedDrives");
+            response = await HttpClient.SendAsync(request);
+            jsonString = await response.Content.ReadAsStringAsync();
+            List<int> joinedDrives = JsonConvert.DeserializeObject<List<int>>(jsonString);
+
+            TempData.Add("joinedDrives", joinedDrives);
+
+            // Get the number of people in the pickup drive
+            List<int> OrdersRealCount = new List<int>();
+
+            foreach(var item in drives)
+            {
+                request = CreateRequestToService(HttpMethod.Get, "drive/" + item.Id + "/ORCount");
+                response = await HttpClient.SendAsync(request);
+                jsonString = await response.Content.ReadAsStringAsync();
+                OrdersRealCount.Add(int.Parse(jsonString));
+            }
+
+            TempData.Add("count", OrdersRealCount);
+
             return View(drives);
         }
 
-        public IActionResult JoinedDrives()
+        public async Task<IActionResult> JoinedDrives()
         {
-            return View();
+            var user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/user");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<Drive> drives = JsonConvert.DeserializeObject<List<Drive>>(jsonString);
+
+            return View(drives);
         }
 
         public IActionResult History()

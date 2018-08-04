@@ -4,6 +4,23 @@
     ViewData["Title"] = "Joined Drives";
 }
 
+<script>
+    function LeaveDrive(driveId) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                var pId = "p" + driveId;
+                var btnId = "btn" + driveId;
+                document.getElementById(pId).innerHTML = "You left the drive";
+                document.getElementById(btnId).classList.add("hide");
+            }
+        };
+        var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
+        xhttp.open("POST", uri, true);
+        xhttp.send();
+    }
+</script>
+
 <h2>Joined Drives</h2>
 
 <table class="table">
@@ -24,27 +41,41 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => item.Driver.Name)
-            </td>
-            @if (item.IsPickup)
-            {
+        @foreach (var item in Model)
+        {
+            <tr>
                 <td>
-                    Pickup @* Add a way for the user to see his order and edit it *@
+                    @item.Driver.Name
                 </td>
-            }
-            else
-            {
                 <td>
-                    Join
+                    @item.Dest.Name
                 </td>
-            }
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-        </tr>
-}
+                @if (item.IsPickup)
+                {
+                    <td>
+                        Pickup
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        Join
+                    </td>
+                }
+                <td>
+                    @item.Time
+                </td>
+                <td>
+                    @{
+                        string pId = "p" + item.Id;
+                        string btnId = "btn" + item.Id;
+                    }
+                    <p id=@pId></p>
+                    <button type="button" onclick="LeaveDrive(@item.Id)" id=@btnId>Leave</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<a asp-action="UserOptions">Back to user options</a><br />
