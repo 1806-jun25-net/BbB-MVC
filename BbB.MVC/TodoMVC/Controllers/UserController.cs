@@ -20,7 +20,7 @@ namespace TodoMVC.Controllers
 
         public async Task<IActionResult> UserOptions(string name)
         {
-            if (TempData.ContainsKey("user"))
+            if (TempData.ContainsKey("username"))
             {
                 name = TempData.Peek("username").ToString();
             }
