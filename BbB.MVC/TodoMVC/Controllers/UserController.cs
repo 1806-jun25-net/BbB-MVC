@@ -20,9 +20,13 @@ namespace TodoMVC.Controllers
 
         public async Task<IActionResult> UserOptions(string name)
         {
+            if (TempData.ContainsKey("user"))
+            {
+                name = TempData.Peek("username").ToString();
+            }
             if (!(await GetUserInfo(name)))
             {
-                ModelState.AddModelError("", "There was an error login in please try agian");
+                ModelState.AddModelError("", "There was an error loging in please try agian");
                 RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
