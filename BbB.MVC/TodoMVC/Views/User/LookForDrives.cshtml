@@ -97,7 +97,6 @@
                             string count = "count" + item.Id;
                             if (item.OrdersReal != null)
                             {
-                                //counter = item.OrdersReal.Count;
                                 line = clist[ORcounter] + " / 12";
                             }
                             else
@@ -135,10 +134,6 @@
                             bool checking = false;
                             if(isPickup == 0)
                             {
-                                //if(clist[ORcounter] < 12)
-                                //{
-                                //    checking = true;
-                                //}
                                 if (item.UsersReal.Count < item.Driver.Seats)
                                 {
                                     checking = true;
@@ -146,47 +141,15 @@
                             }
                             else
                             {
-                                //if(item.UsersReal.Count < item.Driver.Seats)
-                                //{
-                                //    checking = true;
-                                //}
                                 if (clist[ORcounter] < 12)
                                 {
                                     checking = true;
                                 }
                             }
                         }
-                        @*item.UsersReal.Count < item.Driver.Seats || item.OrdersReal.Count < 12*@
                         @if (checking)
                         {
-                            bool isJoined = false;
-                            if (item.UsersReal != null) {
-                                foreach (var j in item.UsersReal)
-                                {
-                                    if (j.Name == (string)TempData.Peek("username"))
-                                    {
-                                        isJoined = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //var users = item.OrdersReal.Keys;
-                                if (joinedDrives.Contains(item.Id))
-                                {
-                                    isJoined = true;
-                                }
-                                //foreach(var j in users)
-                                //{
-                                //    if(j.Name == (string)TempData.Peek("username"))
-                                //    {
-                                //        isJoined = true;
-                                //        break;
-                                //    }
-                                //}
-                            } @* This is to check if the user already joined the drive *@
-                            if (isJoined)
+                            if (joinedDrives.Contains(item.Id))
                             {
                                     <td>Joined</td>
                             }
@@ -198,7 +161,6 @@
                                         string btnId = "btn" + item.Id;
                                      }                                   
                                     <p id=@pId ></p>
-                                    @* button to join the drive *@
                                     <button type="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
                                 </td>
                             }
