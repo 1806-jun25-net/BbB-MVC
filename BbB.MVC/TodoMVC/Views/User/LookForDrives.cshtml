@@ -58,8 +58,11 @@
     <tbody>
         @if (Model.Count() > 0)
         {
+            int ORcounter = 0;
+            var clist = (List<int>)TempData["count"];
+            var joinedDrives = (List<int>)TempData["joinedDrives"];
             @foreach (var item in Model)
-            {
+            {                              
                 if ((string)TempData.Peek("username") != item.Driver.Name)
                 {
                     <tr>
@@ -71,6 +74,7 @@
                         </td>
                         @if (item.IsPickup)
                         {
+                            ORcounter++;
                             <td>
                                 Pickup
                             </td>
@@ -93,8 +97,8 @@
                             string count = "count" + item.Id;
                             if (item.OrdersReal != null)
                             {
-                                counter = item.OrdersReal.Count;
-                                line = counter + " / 12";
+                                //counter = item.OrdersReal.Count;
+                                line = clist[ORcounter] + " / 12";
                             }
                             else
                             {
@@ -127,7 +131,33 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Time)
                         </td>
-                        @if (item.UsersReal.Count < item.Driver.Seats || item.OrdersReal.Count < 12)
+                        @{ 
+                            bool checking = false;
+                            if(isPickup == 0)
+                            {
+                                //if(clist[ORcounter] < 12)
+                                //{
+                                //    checking = true;
+                                //}
+                                if (item.UsersReal.Count < item.Driver.Seats)
+                                {
+                                    checking = true;
+                                }
+                            }
+                            else
+                            {
+                                //if(item.UsersReal.Count < item.Driver.Seats)
+                                //{
+                                //    checking = true;
+                                //}
+                                if (clist[ORcounter] < 12)
+                                {
+                                    checking = true;
+                                }
+                            }
+                        }
+                        @*item.UsersReal.Count < item.Driver.Seats || item.OrdersReal.Count < 12*@
+                        @if (checking)
                         {
                             bool isJoined = false;
                             if (item.UsersReal != null) {
@@ -142,15 +172,19 @@
                             }
                             else
                             {
-                                var users = item.OrdersReal.Keys;
-                                foreach(var j in users)
+                                //var users = item.OrdersReal.Keys;
+                                if (joinedDrives.Contains(item.Id))
                                 {
-                                    if(j.Name == (string)TempData.Peek("username"))
-                                    {
-                                        isJoined = true;
-                                        break;
-                                    }
+                                    isJoined = true;
                                 }
+                                //foreach(var j in users)
+                                //{
+                                //    if(j.Name == (string)TempData.Peek("username"))
+                                //    {
+                                //        isJoined = true;
+                                //        break;
+                                //    }
+                                //}
                             } @* This is to check if the user already joined the drive *@
                             if (isJoined)
                             {
