@@ -15,7 +15,7 @@ namespace TodoMvc.Controllers
     {
         private static readonly Uri s_serviceUri = new Uri("https://localhost:44318/api/");
 
-        protected static readonly string s_CookieName = "UserApiAuth";
+        protected static readonly string s_CookieName = "MVCookie";
 
         protected HttpClient HttpClient { get; }
 

@@ -29,7 +29,6 @@ namespace TodoMVC.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
         {
             HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/login", user);
@@ -126,7 +125,11 @@ namespace TodoMVC.Controllers
                 return View("Error");
             }
 
-            return View("Login");
+            PassCookiesToClient(apiResponse);
+
+            TempData.Clear();
+
+            return RedirectToAction(nameof(Login)) ;
         }
 
         public IActionResult Register()

@@ -172,5 +172,6 @@
     </tbody>
 </table>
 
-<a asp-action="UserOptions">Back to user options</a><br />
+@Html.ActionLink("Back to user options", "UserOptions", new { name = TempData.Peek("name") });
+
 

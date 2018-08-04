@@ -26,6 +26,11 @@ namespace TodoMVC.Controllers
                 RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
+            try
+            {
+                TempData.Add("name", user.Name);
+            }
+            catch(Exception ex){ }            
             TempData.Put("user", user);
             return View(user);
         }
