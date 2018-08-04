@@ -20,9 +20,13 @@ namespace TodoMVC.Controllers
 
         public async Task<IActionResult> UserOptions(string name)
         {
+            if (TempData.ContainsKey("user"))
+            {
+                name = TempData.Peek("username").ToString();
+            }
             if (!(await GetUserInfo(name)))
             {
-                ModelState.AddModelError("", "There was an error login in please try agian");
+                ModelState.AddModelError("", "There was an error loging in please try agian");
                 RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
@@ -109,6 +113,29 @@ namespace TodoMVC.Controllers
         public IActionResult Upgrade()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upgrade(Driver driver)
+        {
+            driver.Name = TempData.Peek("username").ToString();
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/upgrade", driver);
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            return RedirectToAction("UserOptions", "User");
         }
 
         private async Task<bool> GetUserInfo(string userName)

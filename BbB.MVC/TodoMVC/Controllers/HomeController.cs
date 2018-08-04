@@ -97,6 +97,8 @@ namespace TodoMVC.Controllers
 
             PassCookiesToClient(apiResponse);
 
+            TempData["username"] = user.Name;
+
             return RedirectToAction("UserOptions", "User");
         }
         
