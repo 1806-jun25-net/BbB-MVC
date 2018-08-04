@@ -70,6 +70,29 @@ namespace TodoMVC.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upgrade(Driver driver)
+        {
+            driver.Name = TempData.Peek("username").ToString();
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "user/upgrade", driver);
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            return RedirectToAction("UserOptions", "User");
+        }
+
         private async Task<bool> GetUserInfo(string userName)
         {
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "user/" + userName);
