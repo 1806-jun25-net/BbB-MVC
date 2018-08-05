@@ -90,6 +90,19 @@ namespace TodoMVC.Controllers
             return View(drives);
         }
 
+        public async Task<IActionResult> MakeOrder(int destId)
+        {
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "destination/" + destId + "/menu");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<MenuItem> drives = JsonConvert.DeserializeObject<List<MenuItem>>(jsonString);
+
+            return View(drives);
+        }
+
         public async Task<IActionResult> JoinedDrives()
         {
             var user = TempData.Get<User>("user");

@@ -4,6 +4,21 @@
     ViewData["Title"] = "Drives";
 }
 
+<style>
+    .button {
+        background-color: #D3D3D3;
+        border: groove;
+        color: black;
+        padding: 1px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+</style>
+
 <script>
     function joinDrive(driveId, counter, isPickup, seats) {
         var xhttp = new XMLHttpRequest();
@@ -155,14 +170,21 @@
                             }
                             else
                             {
-                                <td>
-                                    @{ 
-                                        string pId = "joined" + item.Id;
-                                        string btnId = "btn" + item.Id;
-                                     }                                   
-                                    <p id=@pId ></p>
-                                    <button type="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
-                                </td>
+                                if(isPickup == 0) { 
+                                    <td>
+                                        @{ 
+                                            string pId = "joined" + item.Id;
+                                            string btnId = "btn" + item.Id;
+                                         }                                   
+                                        <p id=@pId ></p>
+                                        <button type="button" class="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
+                                    </td>
+                                }
+                                else{
+                                    <td>
+                                        <a class="button" asp-controller="User" asp-action="MakeOrder" asp-route-destId="@item.Dest.Id">Join</a>
+                                    </td>
+                                }
                             }
                          }
                     </tr>

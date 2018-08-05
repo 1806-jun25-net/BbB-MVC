@@ -10,8 +10,8 @@ namespace TodoMVC.Models
     /// </summary>
     public class MenuItem
     {
-        public int Id { get; }
-        public string Name { get; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public decimal Cost { get; set; }
     }
 }
