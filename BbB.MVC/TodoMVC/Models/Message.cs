@@ -8,8 +8,9 @@ namespace TodoMVC.Models
     public class Message
     {
         public int Id { get; set; }
-        public int FromId { get; }
-        public int ToId { get; }
-        public string Content { get; }
+        public int FromId { get; set; }
+        public int ToId { get; set; }
+        public string Content { get; set; }
+        public DateTime Time { get; set; }
     }
 }

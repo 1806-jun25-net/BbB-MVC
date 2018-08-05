@@ -318,5 +318,99 @@ namespace TodoMVC.Controllers
 
             return View(drives);
         }
+
+        public IActionResult CreateMsg()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateMsg(Message message)
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            User user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", user.Name);
+            }
+            else if (TempData.Peek("username").ToString() != user.Name)
+            {
+                TempData["username"] = user.Name;
+            }
+
+            message.FromId = user.Id;
+            message.Time = DateTime.Now;
+
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post,
+                $"message/{message.FromId}:{message.ToId}:{message.Content}", message);
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            return RedirectToAction("GetOutbox");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOutbox()
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            User user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", user.Name);
+            }
+            else if (TempData.Peek("username").ToString() != user.Name)
+            {
+                TempData["username"] = user.Name;
+            }
+
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "message/" + user.Id + "/received");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<Message> messages = JsonConvert.DeserializeObject<List<Message>>(jsonString);
+
+            return View(messages);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInbox()
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            User user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", user.Name);
+            }
+            else if (TempData.Peek("username").ToString() != user.Name)
+            {
+                TempData["username"] = user.Name;
+            }
+
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "message/" + user.Id + "/sent");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<Message> messages = JsonConvert.DeserializeObject<List<Message>>(jsonString);
+
+            return View(messages);
+        }
     }
 }

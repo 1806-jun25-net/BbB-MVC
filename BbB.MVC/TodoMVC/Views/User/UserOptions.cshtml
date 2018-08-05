@@ -10,9 +10,15 @@
     <a asp-action="LookForDrives">Look for drives</a><br />
     <a asp-action="JoinedDrives">Joined drives</a><br />
     <a asp-action="History">History</a><br />
-    <a asp-action="Upgrade">Upgrade to driver!</a><br />
+    <br />
+    <a asp-action="Upgrade">Upgrade to driver</a><br />
+    <br />
+    <a asp-action="CreateMsg">Send Message</a><br />
+    <a asp-action="GetInbox">View Inbox</a><br />
+    <a asp-action="GetOutbox">View Outbox</a><br />
     @if (TempData.ContainsKey("driverCheck"))
     {
+        <br />
         <a asp-action="">Create drives</a><br />
         <a asp-action="MyDrives">My drives</a><br />
     }
