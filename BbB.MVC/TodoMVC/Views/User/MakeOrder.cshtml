@@ -1,0 +1,33 @@
+﻿@model IEnumerable<TodoMVC.Models.MenuItem>
+
+@{
+    ViewData["Title"] = "MakeOrder";
+}
+
+<h2>MakeOrder</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Cost
+                </td>
+            </tr>
+    }
+    </tbody>
+</table>
