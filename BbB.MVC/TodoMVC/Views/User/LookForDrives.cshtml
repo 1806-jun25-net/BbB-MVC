@@ -75,7 +75,9 @@
         {
             int ORcounter = 0;
             var clist = (List<int>)TempData["count"];
+            var pickupCount = (List<int>)TempData["pickupsCount"];  
             var joinedDrives = (List<int>)TempData["joinedDrives"];
+            var joinedPickups = (List<int>)TempData["joinedPickups"];
             @foreach (var item in Model)
             {                              
                 if (TempData.Peek("username").ToString() != item.Driver.Name)
@@ -89,7 +91,7 @@
                         </td>
                         @if (item.IsPickup)
                         {
-                            ORcounter++;
+                            //ORcounter++;
                             <td>
                                 Pickup
                             </td>
@@ -112,7 +114,8 @@
                             string count = "count" + item.Id;
                             if (item.OrdersReal != null)
                             {
-                                line = clist[ORcounter] + " / 12";
+                                line = pickupCount[ORcounter] + " / 12";
+                                ORcounter++;
                             }
                             else
                             {
@@ -149,9 +152,11 @@
                             bool checking = false;
                             if(isPickup == 0)
                             {
-                                if (item.UsersReal.Count < item.Driver.Seats)
-                                {
-                                    checking = true;
+                                if(item.Driver.Seats > 0 ){
+                                    if (item.UsersReal.Count < item.Driver.Seats)
+                                    {
+                                        checking = true;
+                                    }
                                 }
                             }
                             else
@@ -164,7 +169,7 @@
                         }
                         @if (checking)
                         {
-                            if (joinedDrives.Contains(item.Id))
+                            if (joinedDrives.Contains(item.Id) || joinedPickups.Contains(item.Id))
                             {
                                     <td>Joined</td>
                             }
@@ -182,7 +187,7 @@
                                 }
                                 else{
                                     <td>
-                                        <a class="button" asp-controller="User" asp-action="MakeOrder" asp-route-destId="@item.Dest.Id">Join</a>
+                                        <a class="button" asp-controller="User" asp-action="MakeOrder" asp-route-destId="@item.Dest.Id" asp-route-driveId="@item.Id">Join</a>
                                     </td>
                                 }
                             }

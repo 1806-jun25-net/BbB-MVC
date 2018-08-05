@@ -7,13 +7,13 @@ namespace TodoMVC.Models
 {
     public class OrderItem
     {
-        public int Id { get; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Item if the order is active.
         /// Is an untracked item otherwise.
         /// </summary>
-        public MenuItem Item { get; }
+        public MenuItem Item { get; set; }
 
         /// <summary>
         /// how many of the item

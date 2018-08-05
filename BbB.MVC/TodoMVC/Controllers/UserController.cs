@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TodoMvc.Controllers;
@@ -65,16 +66,21 @@ namespace TodoMVC.Controllers
 
             // still need a way to check if the user already joined the pickup drive
 
-            // Get all the Ids of the drives the user has joined
-
+            // Get all the Ids of the join drives the user has joined
             request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/JoinedDrives");
             response = await HttpClient.SendAsync(request);
             jsonString = await response.Content.ReadAsStringAsync();
             List<int> joinedDrives = JsonConvert.DeserializeObject<List<int>>(jsonString);
-
             TempData.Add("joinedDrives", joinedDrives);
 
-            // Get the number of people in the pickup drive
+            //// Get all the Ids of the pickup drives the user has joined
+            request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/JoinedPickups");
+            response = await HttpClient.SendAsync(request);
+            jsonString = await response.Content.ReadAsStringAsync();
+            List<int> joinedPickups = JsonConvert.DeserializeObject<List<int>>(jsonString);
+            TempData.Add("joinedPickups", joinedPickups);
+
+            // Get the number of people in the join drive
             List<int> OrdersRealCount = new List<int>();
 
             foreach (var item in drives)
@@ -85,22 +91,111 @@ namespace TodoMVC.Controllers
                 OrdersRealCount.Add(int.Parse(jsonString));
             }
 
+            //// Get the number of people in the pickup drive
+            List<int> joinedPickupCount = new List<int>();
+
+            foreach (var item in drives)
+            {
+                if (item.IsPickup)
+                {
+                    if(item.UsersReal != null) joinedPickupCount.Add(item.UsersReal.Count());
+                }
+            }
+
             TempData.Add("count", OrdersRealCount);
+            TempData.Add("pickupsCount", joinedPickupCount);
 
             return View(drives);
         }
 
-        public async Task<IActionResult> MakeOrder(int destId)
+        public async Task<IActionResult> MakeOrder(int destId, int driveId)
         {
-            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "destination/" + destId + "/menu");
+            if (TempData.ContainsKey("destId")) TempData.Remove("destId");
+            TempData.Add("destId", destId);
+
+            if (TempData.ContainsKey("driveId")) TempData.Remove("driveId");
+            TempData.Add("driveId", driveId);
+
+            // request for the destination
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "destination/" + destId);
 
             var response = await HttpClient.SendAsync(request);
 
             string jsonString = await response.Content.ReadAsStringAsync();
 
-            List<MenuItem> drives = JsonConvert.DeserializeObject<List<MenuItem>>(jsonString);
+            Destination destination = JsonConvert.DeserializeObject<Destination>(jsonString);
 
-            return View(drives);
+            if (TempData.ContainsKey("destName")) TempData.Remove("destName");
+            TempData.Add("destName", destination.Name);
+
+            if (TempData.ContainsKey("destAdd")) TempData.Remove("destAdd");
+            TempData.Add("destAdd", destination.Address);
+
+            // request for the menu
+            request = CreateRequestToService(HttpMethod.Get, "destination/" + destId + "/menu");
+
+            response = await HttpClient.SendAsync(request);
+
+            jsonString = await response.Content.ReadAsStringAsync();
+
+            List<MenuItem> menu = JsonConvert.DeserializeObject<List<MenuItem>>(jsonString);
+
+            if (TempData.ContainsKey("menu")) TempData.Remove("menu");
+            TempData.Put("menu", menu);
+
+            return View(menu);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakeOrder(IFormCollection collection)
+        {
+            // The drive id to insert into the UserPickup table
+            var driveId = int.Parse(TempData.Peek("driveId").ToString());
+
+            // The user, we need the id for the same reason
+            var user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+
+            // Request to insert the order in user Pickup 
+            // Here the user finally joins the drive and we get the Id of the pickup 
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Post, "drive/" + driveId + "/" + user.Id + "/pickup");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            int pickupId = JsonConvert.DeserializeObject<int>(jsonString);
+
+            if (pickupId > 0)
+            {
+                // The menu to know what the user ordered
+                var menu = TempData.Get<List<MenuItem>>("menu");
+                string number = "number";
+                string text = "text";
+
+                // Add every item the user ordered to OrderItem table
+                foreach (var item in menu)
+                {
+                    number = "number" + item.Id;
+                    text = "text" + item.Id;
+                    if (int.Parse(collection[number].ToString()) > 0)
+                    {
+                        var orderItem = new OrderItem
+                        {
+                            Item = item,
+                            Quantity = int.Parse(collection[number].ToString()),
+                            Message = collection[text]
+                        };
+
+                        request = CreateRequestToService(HttpMethod.Post, "drive/" + pickupId + "/NewOrderItem", orderItem);
+
+                        response = await HttpClient.SendAsync(request);
+                    }
+                }
+            }
+
+            return RedirectToAction(nameof(LookForDrives));
         }
 
         public async Task<IActionResult> JoinedDrives()
