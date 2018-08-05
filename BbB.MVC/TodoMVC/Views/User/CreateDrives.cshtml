@@ -1,0 +1,49 @@
+﻿@model TodoMVC.Models.Drive
+
+@{
+    ViewData["Title"] = "Create Drive";
+    var destinations = ViewData["destinations"] as IEnumerable<Destination>;
+}
+
+<h2>CreateDrives</h2>
+
+<h4>Drive</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateDrives">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <select asp-for="IsPickup" class="form-control">
+                    <option value="true">Pickup</option>
+                    <option value="false">Join</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Dest.Name" class="control-label"></label>
+                <select asp-for="Dest.Name" class="form-control">
+                    @foreach (var item in destinations)
+                    {
+                        <option value="@item.Name">@item.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Time" class="control-label"></label>
+                <input asp-for="Time" class="form-control" />
+                <span asp-validation-for="Time" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

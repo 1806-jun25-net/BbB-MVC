@@ -39,6 +39,40 @@ namespace TodoMVC.Controllers
             return View(user);
         }
 
+        public async Task<User> CheckTempUser()
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            User user = TempData.Get<User>("user");
+            TempData.Put("user", user);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", user.Name);
+            }
+            else if (TempData.Peek("username").ToString() != user.Name)
+            {
+                TempData["username"] = user.Name;
+            }
+
+            return user;
+        }
+
+        public async Task<Driver> CheckTempDriver()
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            Driver driver = TempData.Get<Driver>("user");
+            TempData.Put("user", driver);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", driver.Name);
+            }
+            else if (TempData.Peek("username").ToString() != driver.Name)
+            {
+                TempData["username"] = driver.Name;
+            }
+
+            return driver;
+        }
+
         public async Task<IActionResult> LookForDrives()
         {
             var user = TempData.Get<User>("user");
@@ -186,20 +220,67 @@ namespace TodoMVC.Controllers
             }
         }
 
+        public async Task<IActionResult> CreateDrives()
+        {
+            if (TempData.ContainsKey("isBad"))
+            {
+                ModelState.AddModelError("", "Invalid drive time");
+            }
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Get, "destination");
+
+            try
+            {
+                HttpResponseMessage apiResponse = await HttpClient.SendAsync(apiRequest);
+
+                string jsonString = await apiResponse.Content.ReadAsStringAsync();
+
+                IEnumerable<Destination> destinations = JsonConvert.DeserializeObject<IEnumerable<Destination>>(jsonString);
+
+                ViewData.Add("destinations", destinations);
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDrives(Drive drive)
+        {
+            if (drive.Time < DateTime.Now.AddMinutes(Drive.Buffer))
+            {
+                TempData.Add("isBad", true);
+                return RedirectToAction("CreateDrives");
+            }
+            Driver driver = await CheckTempDriver();
+
+            drive.Driver = driver;
+
+            HttpRequestMessage apiRequest = CreateRequestToService(HttpMethod.Post, "drive/create", drive);
+
+            HttpResponseMessage apiResponse;
+
+            try
+            {
+                apiResponse = await HttpClient.SendAsync(apiRequest);
+                string jsonString = await apiResponse.Content.ReadAsStringAsync();
+            }
+            catch (AggregateException ex)
+            {
+                ModelState.AddModelError("", "Error");
+                return View();
+            }
+
+            return RedirectToAction("MyDrives", "User");
+        }
+
         [HttpGet]
         public async Task<IActionResult> MyDrives()
         {
-            await GetUserInfo(TempData.Peek("name").ToString());
-            Driver driver = TempData.Get<Driver>("user");
-            TempData.Put("user", driver);
-            if (TempData.Peek("username") == null)
-            {
-                TempData.Add("username", driver.Name);
-            }
-            else if(TempData.Peek("username").ToString() != driver.Name)
-            {
-                TempData["username"] = driver.Name;
-            }
+            Driver driver = await CheckTempDriver();
+
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + driver.DriverId + "/driver");
 
             var response = await HttpClient.SendAsync(request);
@@ -233,18 +314,17 @@ namespace TodoMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateMsg(Message message)
         {
-            await GetUserInfo(TempData.Peek("name").ToString());
-            User user = TempData.Get<User>("user");
-            TempData.Put("user", user);
-            if (TempData.Peek("username") == null)
-            {
-                TempData.Add("username", user.Name);
-            }
-            else if (TempData.Peek("username").ToString() != user.Name)
-            {
-                TempData["username"] = user.Name;
-            }
+            User user = await CheckTempUser();
 
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, $"user/{message.User.Name}/user");
+
+            HttpResponseMessage response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            User toUser = JsonConvert.DeserializeObject<Driver>(jsonString);
+
+            message.ToId = toUser.Id;
             message.FromId = user.Id;
             message.Time = DateTime.Now;
 
@@ -269,17 +349,7 @@ namespace TodoMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOutbox()
         {
-            await GetUserInfo(TempData.Peek("name").ToString());
-            User user = TempData.Get<User>("user");
-            TempData.Put("user", user);
-            if (TempData.Peek("username") == null)
-            {
-                TempData.Add("username", user.Name);
-            }
-            else if (TempData.Peek("username").ToString() != user.Name)
-            {
-                TempData["username"] = user.Name;
-            }
+            User user = await CheckTempUser();
 
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "message/" + user.Id + "/received");
 
@@ -295,17 +365,7 @@ namespace TodoMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> GetInbox()
         {
-            await GetUserInfo(TempData.Peek("name").ToString());
-            User user = TempData.Get<User>("user");
-            TempData.Put("user", user);
-            if (TempData.Peek("username") == null)
-            {
-                TempData.Add("username", user.Name);
-            }
-            else if (TempData.Peek("username").ToString() != user.Name)
-            {
-                TempData["username"] = user.Name;
-            }
+            User user = await CheckTempUser();
 
             HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "message/" + user.Id + "/sent");
 

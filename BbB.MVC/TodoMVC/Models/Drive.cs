@@ -13,7 +13,7 @@ namespace TodoMVC.Models
 
         public static readonly int MAX_PICKUP_SIZE = 12;
 
-        public Dictionary<User, List<OrderItem>> OrdersReal;
+        public Dictionary<int, List<OrderItem>> OrdersReal;
 
         /// <summary>
         /// internal Id. -1 if untracked by database

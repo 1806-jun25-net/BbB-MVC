@@ -54,5 +54,7 @@ namespace TodoMVC.Models
         /// Use NumRating and AvgRating to access.
         /// </summary>
         public decimal Rating { get; set; }
+
+        public Message Message { get; set; }
     }
 }
