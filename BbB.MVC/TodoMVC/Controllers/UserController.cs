@@ -20,13 +20,13 @@ namespace TodoMVC.Controllers
 
         public async Task<IActionResult> UserOptions(string name)
         {
-            if (TempData.ContainsKey("user"))
+            if (TempData.ContainsKey("username") && name == null)
             {
                 name = TempData.Peek("username").ToString();
             }
             if (!(await GetUserInfo(name)))
             {
-                ModelState.AddModelError("", "There was an error loging in please try agian");
+                ModelState.AddModelError("", "There was an error logging in please try agian");
                 RedirectToAction("Login", "Home");
             }
             var user = TempData.Get<User>("user");
@@ -34,12 +34,12 @@ namespace TodoMVC.Controllers
             {
                 TempData.Add("name", user.Name);
             }
-            catch(Exception ex){ }            
+            catch (Exception ex) { }
             TempData.Put("user", user);
             return View(user);
         }
 
-        public async Task<IActionResult> LookForDrives() 
+        public async Task<IActionResult> LookForDrives()
         {
             var user = TempData.Get<User>("user");
             TempData.Put("user", user);
@@ -48,7 +48,8 @@ namespace TodoMVC.Controllers
             {
                 TempData.Add("username", user.Name);
                 TempData.Add("userId", user.Id);
-            }else if((string)TempData.Peek("username") != user.Name)
+            }
+            else if ((string)TempData.Peek("username") != user.Name)
             {
                 TempData["username"] = user.Name;
                 TempData["userId"] = user.Id;
@@ -65,7 +66,7 @@ namespace TodoMVC.Controllers
             // still need a way to check if the user already joined the pickup drive
 
             // Get all the Ids of the drives the user has joined
-                        
+
             request = CreateRequestToService(HttpMethod.Get, "drive/" + user.Id + "/JoinedDrives");
             response = await HttpClient.SendAsync(request);
             jsonString = await response.Content.ReadAsStringAsync();
@@ -76,7 +77,7 @@ namespace TodoMVC.Controllers
             // Get the number of people in the pickup drive
             List<int> OrdersRealCount = new List<int>();
 
-            foreach(var item in drives)
+            foreach (var item in drives)
             {
                 request = CreateRequestToService(HttpMethod.Get, "drive/" + item.Id + "/ORCount");
                 response = await HttpClient.SendAsync(request);
@@ -126,7 +127,6 @@ namespace TodoMVC.Controllers
 
             try
             {
-                
                 apiResponse = await HttpClient.SendAsync(apiRequest);
             }
             catch (AggregateException ex)
@@ -140,7 +140,7 @@ namespace TodoMVC.Controllers
 
         private async Task<bool> GetUserInfo(string userName)
         {
-            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "user/" + userName);
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "user/" + userName + "/driver");
             try
             {
                 var response = await HttpClient.SendAsync(request);
@@ -152,9 +152,18 @@ namespace TodoMVC.Controllers
 
                 string jsonString = await response.Content.ReadAsStringAsync();
 
-                User user = JsonConvert.DeserializeObject<User>(jsonString);
+                if (jsonString.Contains("driverId"))
+                {
+                    Driver driver = JsonConvert.DeserializeObject<Driver>(jsonString);
+                    TempData.Put("driverCheck", "yes");
+                    TempData.Put("user", driver);
+                }
 
-                TempData.Put("user", user);
+                else
+                {
+                    User user = JsonConvert.DeserializeObject<Driver>(jsonString);
+                    TempData.Put("user", user);
+                }
 
                 return true;
             }
@@ -162,6 +171,44 @@ namespace TodoMVC.Controllers
             {
                 return false;
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyDrives()
+        {
+            await GetUserInfo(TempData.Peek("name").ToString());
+            Driver driver = TempData.Get<Driver>("user");
+            TempData.Put("user", driver);
+            if (TempData.Peek("username") == null)
+            {
+                TempData.Add("username", driver.Name);
+            }
+            else if(TempData.Peek("username").ToString() != driver.Name)
+            {
+                TempData["username"] = driver.Name;
+            }
+            HttpRequestMessage request = CreateRequestToService(HttpMethod.Get, "drive/" + driver.DriverId + "/driver");
+
+            var response = await HttpClient.SendAsync(request);
+
+            string jsonString = await response.Content.ReadAsStringAsync();
+
+            List<Drive> drives = JsonConvert.DeserializeObject<List<Drive>>(jsonString);
+
+            // Get the number of people in the pickup drive
+            List<int> OrdersRealCount = new List<int>();
+
+            foreach (var item in drives)
+            {
+                request = CreateRequestToService(HttpMethod.Get, "drive/" + item.Id + "/ORCount");
+                response = await HttpClient.SendAsync(request);
+                jsonString = await response.Content.ReadAsStringAsync();
+                OrdersRealCount.Add(int.Parse(jsonString));
+            }
+
+            TempData.Add("count", OrdersRealCount);
+
+            return View(drives);
         }
     }
 }

@@ -11,4 +11,9 @@
     <a asp-action="JoinedDrives">Joined drives</a><br />
     <a asp-action="History">History</a><br />
     <a asp-action="Upgrade">Upgrade to driver!</a><br />
+    @if (TempData.ContainsKey("driverCheck"))
+    {
+        <a asp-action="">Create drives</a><br />
+        <a asp-action="MyDrives">My drives</a><br />
+    }
 </div>

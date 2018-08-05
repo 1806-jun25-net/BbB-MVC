@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<TodoMVC.Models.Drive>
 
 @{
-    ViewData["Title"] = "Drives";
+    ViewData["Title"] = "MyDrives";
 }
 
 <script>
@@ -39,9 +39,6 @@
     <thead>
         <tr>
             <th>
-                Driver Name
-            </th>
-            <th>
                 Location
             </th>
             <th>
@@ -60,17 +57,13 @@
         {
             int ORcounter = 0;
             var clist = (List<int>)TempData["count"];
-            var joinedDrives = (List<int>)TempData["joinedDrives"];
             @foreach (var item in Model)
-            {                              
-                if (TempData.Peek("username").ToString() != item.Driver.Name)
+            {
+                if (TempData.Peek("username").ToString() == item.Driver.Name)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Driver.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Dest.Name)
+                            @item.Dest.Name
                         </td>
                         @if (item.IsPickup)
                         {
@@ -85,14 +78,12 @@
                                 Join
                             </td>
                         }
-                        @{ 
+                        @{
                             int counter = 0;
                             int seats = 0;
-                            int isPickup = 0;
-                         }
+                        }
                         @if (item.IsPickup)
                         {
-                            isPickup = 1;
                             string line;
                             string count = "count" + item.Id;
                             if (item.OrdersReal != null)
@@ -105,7 +96,7 @@
                                 line = counter + " / 12";
                             }
                             <td>
-                                <p id=@count >@line</p>
+                                <p id=@count>@line</p>
                             </td>
                         }
                         else
@@ -124,54 +115,59 @@
                                 line = counter + " / " + seats;
                             }
                             <td>
-                                <p id=@count >@line</p>
+                                <p id=@count>@line</p>
                             </td>
                         }
                         <td>
                             @Html.DisplayFor(modelItem => item.Time)
                         </td>
-                        @{ 
-                            bool checking = false;
-                            if(isPickup == 0)
-                            {
-                                if (item.UsersReal.Count < item.Driver.Seats)
-                                {
-                                    checking = true;
-                                }
-                            }
-                            else
-                            {
-                                if (clist[ORcounter] < 12)
-                                {
-                                    checking = true;
-                                }
-                            }
-                        }
-                        @if (checking)
-                        {
-                            if (joinedDrives.Contains(item.Id))
-                            {
-                                    <td>Joined</td>
-                            }
-                            else
-                            {
-                                <td>
-                                    @{ 
-                                        string pId = "joined" + item.Id;
-                                        string btnId = "btn" + item.Id;
-                                     }                                   
-                                    <p id=@pId ></p>
-                                    <button type="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
-                                </td>
-                            }
-                         }
                     </tr>
                 }
-             }
-         }
+            }
+        }
     </tbody>
 </table>
 
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IsPickup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsPickup)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+                <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+            </tr>
+        }
+    </tbody>
+</table>*@
+
+
 @Html.ActionLink("Back to user options", "UserOptions", new { name = TempData.Peek("name") })
-
-
