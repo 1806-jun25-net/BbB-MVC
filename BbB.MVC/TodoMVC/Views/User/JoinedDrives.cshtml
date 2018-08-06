@@ -15,7 +15,7 @@
                 document.getElementById(btnId).classList.add("hide");
             }
         };
-        var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
+        var uri = "https://getlunchapi.azurewebsites.net/api/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
         xhttp.open("POST", uri, true);
         xhttp.send();
     }
