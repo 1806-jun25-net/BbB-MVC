@@ -17,9 +17,9 @@
             }
         };
         if (isPickup === 0) {
-            var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
+            var uri = "https://getlunchapi.azurewebsites.net/api/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
         } else {
-            var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leavePickup";
+            var uri = "https://getlunchapi.azurewebsites.net/api/" + driveId + "/" + @TempData.Peek("userId") + "/leavePickup";
         }
         xhttp.open("POST", uri, true);
         xhttp.send();

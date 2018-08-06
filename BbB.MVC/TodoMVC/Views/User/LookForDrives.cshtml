@@ -40,7 +40,7 @@
                 document.getElementById(countId).innerHTML = counterUpdate;
             }
         };
-        var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId");
+        var uri = "https://getlunchapi.azurewebsites.net/api/" + driveId + "/" + @TempData.Peek("userId");
         xhttp.open("POST", uri, true);
         //xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         //xhttp.send("fname=Henry&lname=Ford");
