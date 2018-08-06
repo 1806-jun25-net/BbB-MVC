@@ -5,7 +5,8 @@
 }
 
 <script>
-    function LeaveDrive(driveId) {
+    function LeaveDrive(driveId, isPickup) {
+
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4) {
@@ -15,7 +16,11 @@
                 document.getElementById(btnId).classList.add("hide");
             }
         };
-        var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
+        if (isPickup === 0) {
+            var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leave";
+        } else {
+            var uri = "https://localhost:44318/api/drive/" + driveId + "/" + @TempData.Peek("userId") + "/leavePickup";
+        }
         xhttp.open("POST", uri, true);
         xhttp.send();
     }
@@ -41,6 +46,9 @@
         </tr>
     </thead>
     <tbody>
+        @{ 
+            int isPickup = 0;
+        }
         @foreach (var item in Model)
         {
             <tr>
@@ -52,12 +60,14 @@
                 </td>
                 @if (item.IsPickup)
                 {
+                    isPickup = 1;
                     <td>
                         Pickup
                     </td>
                 }
                 else
                 {
+                    isPickup = 0;
                     <td>
                         Join
                     </td>
@@ -71,7 +81,7 @@
                         string btnId = "btn" + item.Id;
                     }
                     <p id=@pId></p>
-                    <button type="button" onclick="LeaveDrive(@item.Id)" id=@btnId>Leave</button>
+                    <button type="button" onclick="LeaveDrive(@item.Id, @isPickup)" id=@btnId>Leave</button>
                 </td>
             </tr>
         }
