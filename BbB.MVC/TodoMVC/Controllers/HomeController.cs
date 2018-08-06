@@ -99,7 +99,7 @@ namespace TodoMVC.Controllers
 
             TempData["username"] = user.Name;
 
-            return RedirectToAction("UserOptions", "User");
+            return Redirect("https://getlunchadmin.azurewebsites.net/");
         }
         
         public async Task<ActionResult> Logout()
