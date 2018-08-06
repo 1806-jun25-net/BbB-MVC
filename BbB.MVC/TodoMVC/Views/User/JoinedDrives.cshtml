@@ -4,6 +4,21 @@
     ViewData["Title"] = "Joined Drives";
 }
 
+<style>
+    .button {
+        background-color: #D3D3D3;
+        border: groove;
+        color: black;
+        padding: 1px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+</style>
+
 <script>
     function LeaveDrive(driveId, isPickup) {
 
@@ -81,7 +96,7 @@
                         string btnId = "btn" + item.Id;
                     }
                     <p id=@pId></p>
-                    <button type="button" onclick="LeaveDrive(@item.Id, @isPickup)" id=@btnId>Leave</button>
+                    <button type="button" class="button" onclick="LeaveDrive(@item.Id, @isPickup)" id=@btnId>Leave</button>
                 </td>
             </tr>
         }

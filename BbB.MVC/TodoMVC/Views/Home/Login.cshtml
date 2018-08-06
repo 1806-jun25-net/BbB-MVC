@@ -4,6 +4,21 @@
     ViewData["Title"] = "Login";
 }
 
+<style>
+    .button {
+        background-color: #D3D3D3;
+        border: groove;
+        color: black;
+        padding: 1px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+</style>
+
 <h2>Login</h2>
 
 <hr />
@@ -22,7 +37,7 @@
                 <span asp-validation-for="Pass" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-default" />
+                <input type="submit" value="Login" class="button" />
             </div>
         </form>
     </div>

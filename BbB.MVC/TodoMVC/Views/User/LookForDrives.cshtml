@@ -75,11 +75,11 @@
         {
             int ORcounter = 0;
             var clist = (List<int>)TempData["count"];
-            var pickupCount = (List<int>)TempData["pickupsCount"];  
+            var pickupCount = (List<int>)TempData["pickupsCount"];
             var joinedDrives = (List<int>)TempData["joinedDrives"];
             var joinedPickups = (List<int>)TempData["joinedPickups"];
             @foreach (var item in Model)
-            {                              
+            {
                 if (TempData.Peek("username").ToString() != item.Driver.Name)
                 {
                     <tr>
@@ -102,11 +102,11 @@
                                 Join
                             </td>
                         }
-                        @{ 
+                        @{
                             int counter = 0;
                             int seats = 0;
                             int isPickup = 0;
-                         }
+                        }
                         @if (item.IsPickup)
                         {
                             isPickup = 1;
@@ -123,7 +123,7 @@
                                 line = counter + " / 12";
                             }
                             <td>
-                                <p id=@count >@line</p>
+                                <p id=@count>@line</p>
                             </td>
                         }
                         else
@@ -142,17 +142,18 @@
                                 line = counter + " / " + seats;
                             }
                             <td>
-                                <p id=@count >@line</p>
+                                <p id=@count>@line</p>
                             </td>
                         }
                         <td>
                             @Html.DisplayFor(modelItem => item.Time)
                         </td>
-                        @{ 
+                        @{
                             bool checking = false;
-                            if(isPickup == 0)
+                            if (isPickup == 0)
                             {
-                                if(item.Driver.Seats > 0 ){
+                                if (item.Driver.Seats > 0)
+                                {
                                     if (item.UsersReal.Count < item.Driver.Seats)
                                     {
                                         checking = true;
@@ -171,31 +172,33 @@
                         {
                             if (joinedDrives.Contains(item.Id) || joinedPickups.Contains(item.Id))
                             {
-                                    <td>Joined</td>
+                                <td>Joined</td>
                             }
                             else
                             {
-                                if(isPickup == 0) { 
+                                if (isPickup == 0)
+                                {
                                     <td>
-                                        @{ 
+                                        @{
                                             string pId = "joined" + item.Id;
                                             string btnId = "btn" + item.Id;
-                                         }                                   
-                                        <p id=@pId ></p>
-                                        <button type="button" class="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId >Join</button>
+                                        }
+                                        <p id=@pId></p>
+                                        <button type="button" class="button" onclick="joinDrive(@item.Id, @counter, @isPickup, @seats)" id=@btnId>Join</button>
                                     </td>
                                 }
-                                else{
+                                else
+                                {
                                     <td>
                                         <a class="button" asp-controller="User" asp-action="MakeOrder" asp-route-destId="@item.Dest.Id" asp-route-driveId="@item.Id">Join</a>
                                     </td>
                                 }
                             }
-                         }
+                        }
                     </tr>
                 }
-             }
-         }
+            }
+        }
     </tbody>
 </table>
 
