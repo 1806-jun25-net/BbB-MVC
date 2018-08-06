@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TodoMVC</title>
+    <title>@ViewData["Title"] - Get Lunch</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -27,16 +27,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">TodoMVC</a>
+                <a asp-area="" asp-controller="Home" asp-action="Login" class="navbar-brand">Get Lunch</a>
             </div>
             @{
                 //var user = TempData.Get;
             }
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     @*@if (user == null)
                     {*@
                         <li><a asp-area="" asp-controller="Home" asp-action="Login">Login</a></li>
@@ -45,7 +42,7 @@
                     @if (user != null)
                     {*@
                         <li><a asp-area="" asp-controller="Home" asp-action="Logout">Logout</a></li>
-                    //}
+                    @*}*@
                 </ul>
             </div>
         </div>
@@ -57,7 +54,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2018 - TodoMVC</p>
+            <p>&copy; 2018 - Get Lunch</p>
         </footer>
     </div>
 
